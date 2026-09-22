@@ -1,0 +1,22 @@
+Summary — August history correction
+
+What happened
+
+A rate change was entered in September. To apply it across the month, ProcessData was run from September 1.
+Running from the first of a month re-triggers the prior month's close. August had already been closed, so the re-close refreshed August's history with current September values — interest, balances, and rate. Fees were not affected.
+A safeguard to stop a closed month from being closed again had been identified but was not yet deployed.
+The rate change prompted the September 1 run and made the discrepancy visible, but the re-close itself is the cause. QA reproduction is underway to confirm this.
+
+Impact
+
+August history records only. Current September data and all fees are unaffected.
+
+Resolution
+
+Restore August history from the verified August 31 backup, using the process already validated in the earlier recovery, with a before/after review prior to committing.
+Deploy the safeguard so a closed month cannot be re-closed, however ProcessData is run.
+Confirm whether any August reports or invoices were generated from the affected data, and regenerate them after the restore.
+
+Going forward
+
+Rate changes do not require a run from the first of the month. The next regular ProcessData run applies the new rate to the full month automatically.
