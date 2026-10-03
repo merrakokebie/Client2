@@ -1,3 +1,14 @@
+SELECT COUNT(*) AS Sept30Payoffs,
+       SUM(CASE WHEN ISNULL(lh.CheckFee,0)+ISNULL(lh.CheckOnlyFee,0)
+                   +ISNULL(lh.WireFee,0)+ISNULL(lh.AdjustmentFee,0) > 0
+                THEN 1 ELSE 0 END) AS WithFees,
+       SUM(ISNULL(lh.InterestAccrued,0)) AS InterestInThoseRows
+FROM LoanHistory lh
+JOIN Loan l ON l.LoanID = lh.LoanID
+WHERE lh.PeriodEndDate = '2026-09-30'
+  AND l.PaydownDate >= '2026-09-30' AND l.PaydownDate < '2026-10-01';
+
+
 -- Credit lines with loan history but no credit line history row
 SELECT DISTINCT l.CreditLineID
 FROM LoanHistory lh
