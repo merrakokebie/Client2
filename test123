@@ -1,18 +1,71 @@
-SELECT COUNT(*) AS Sept30Payoffs,
-       SUM(CASE WHEN ISNULL(lh.CheckFee,0)+ISNULL(lh.CheckOnlyFee,0)
-                   +ISNULL(lh.WireFee,0)+ISNULL(lh.AdjustmentFee,0) > 0
-                THEN 1 ELSE 0 END) AS WithFees,
-       SUM(ISNULL(lh.InterestAccrued,0)) AS InterestInThoseRows
-FROM LoanHistory lh
-JOIN Loan l ON l.LoanID = lh.LoanID
-WHERE lh.PeriodEndDate = '2026-09-30'
-  AND l.PaydownDate >= '2026-09-30' AND l.PaydownDate < '2026-10-01';
+DECLARE @PED  datetime = '2026-09-30';
+DECLARE @M1   datetime = '2026-09-01';
+DECLARE @NEXT datetime = '2026-10-01';
 
+IF OBJECT_ID('tempdb..#SeptFees') IS NOT NULL DROP TABLE #SeptFees;
 
--- Credit lines with loan history but no credit line history row
-SELECT DISTINCT l.CreditLineID
-FROM LoanHistory lh
-JOIN Loan l ON l.LoanID = lh.LoanID
-LEFT JOIN CreditLineHistory clh
-       ON clh.CreditLineID = l.CreditLineID AND clh.PeriodEndDate = @PED
-WHERE lh.PeriodEndDate = @PED AND clh.CreditLineID IS NULL;
+;WITH FromHistory AS (               -- loans in September history
+    SELECT lh.LoanID, l.CreditLineID, ISNULL(lh.CheckFee,0) AS Fee,
+           'History' AS Src,
+           ROW_NUMBER() OVER (PARTITION BY lh.LoanID ORDER BY lh.LoanHistoryID) AS rn
+    FROM LoanHistory lh
+    JOIN Loan l ON l.LoanID = lh.LoanID
+    WHERE lh.PeriodEndDate = @PED
+),
+FromLoan AS (                        -- paid down in September, no history row
+    SELECT l.LoanID, l.CreditLineID, ISNULL(l.CheckFee,0) AS Fee,
+           'PaidDown' AS Src, 1 AS rn
+    FROM Loan l
+    WHERE l.IsCollateral = 0 AND l.IsInactive = 0
+      AND l.PaydownDate >= @M1 AND l.PaydownDate < @NEXT
+      AND NOT EXISTS (SELECT 1 FROM LoanHistory x
+                      WHERE x.LoanID = l.LoanID AND x.PeriodEndDate = @PED)
+)
+SELECT LoanID, CreditLineID, Fee, Src
+INTO   #SeptFees
+FROM   (SELECT * FROM FromHistory WHERE rn = 1
+        UNION ALL
+        SELECT * FROM FromLoan) u;
+
+-- Must return zero rows: a loan in both sources
+SELECT LoanID, COUNT(*) AS Copies FROM #SeptFees GROUP BY LoanID HAVING COUNT(*) > 1;
+
+-- Preview by credit line
+SELECT clh.CreditLineID,
+       clh.PeriodFee                                    AS Current_PeriodFee,
+       ISNULL(SUM(CASE WHEN f.Src='History'  THEN f.Fee END),0) AS History_Fees,
+       ISNULL(SUM(CASE WHEN f.Src='PaidDown' THEN f.Fee END),0) AS PaidDown_Fees,
+       ISNULL(SUM(f.Fee),0)                             AS New_PeriodFee,
+       ISNULL(SUM(f.Fee),0) - clh.PeriodFee             AS Change,
+       COUNT(f.LoanID)                                  AS Loans
+FROM CreditLineHistory clh
+LEFT JOIN #SeptFees f ON f.CreditLineID = clh.CreditLineID
+WHERE clh.PeriodEndDate = @PED
+GROUP BY clh.CreditLineID, clh.PeriodFee
+ORDER BY ABS(ISNULL(SUM(f.Fee),0) - clh.PeriodFee) DESC;
+
+SELECT * INTO CreditLineHistory_Bak_PeriodFee_20261001
+FROM CreditLineHistory WHERE PeriodEndDate = @PED;
+
+BEGIN TRANSACTION;
+
+UPDATE clh
+SET    clh.PeriodFee = ISNULL(s.TotalFee, 0)
+FROM   CreditLineHistory clh
+LEFT JOIN (SELECT CreditLineID, SUM(Fee) AS TotalFee
+           FROM #SeptFees GROUP BY CreditLineID) s
+       ON s.CreditLineID = clh.CreditLineID
+WHERE  clh.PeriodEndDate = @PED;
+
+SELECT @@ROWCOUNT AS RowsUpdated;
+
+-- COMMIT TRANSACTION;
+-- ROLLBACK TRANSACTION;
+
+SELECT b.CreditLineID, b.PeriodFee AS Before_Fee, h.PeriodFee AS After_Fee,
+       h.PeriodFee - b.PeriodFee AS Change
+FROM CreditLineHistory_Bak_PeriodFee_20261001 b
+JOIN CreditLineHistory h
+  ON h.CreditLineID = b.CreditLineID AND h.PeriodEndDate = b.PeriodEndDate
+WHERE h.PeriodFee <> b.PeriodFee
+ORDER BY ABS(h.PeriodFee - b.PeriodFee) DESC;
