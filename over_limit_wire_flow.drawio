@@ -1,0 +1,60 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Over-Limit Wire Escalation" id="wire-over-limit">
+    <mxGraphModel dx="1000" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="up" value="&lt;b&gt;Wire file uploaded&lt;/b&gt;&lt;br&gt;External user" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#5F5E5A;fontColor=#444441;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="220" y="20" width="240" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="dec" value="&lt;b&gt;Over limit?&lt;/b&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#5F5E5A;fontColor=#444441;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="230" y="104" width="220" height="72" as="geometry"/>
+        </mxCell>
+        <mxCell id="stp" value="&lt;b&gt;Sent via STP&lt;/b&gt;&lt;br&gt;No approval needed" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#5F5E5A;fontColor=#444441;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="500" y="112" width="160" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="err" value="&lt;b&gt;Over-limit error shown&lt;/b&gt;&lt;br&gt;Escalate or correct row" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FAECE7;strokeColor=#993C1D;fontColor=#712B13;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="220" y="212" width="240" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="fix" value="&lt;b&gt;Correct row&lt;/b&gt;&lt;br&gt;Re-upload file" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#5F5E5A;fontColor=#444441;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="20" y="212" width="140" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="esc" value="&lt;b&gt;Wire escalated&lt;/b&gt;&lt;br&gt;NeedsWireLimit = 1, no STP" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#5F5E5A;fontColor=#444441;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="220" y="304" width="240" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="que" value="&lt;b&gt;WireLimitApproval queue&lt;/b&gt;&lt;br&gt;Role required" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#534AB7;fontColor=#3C3489;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="220" y="396" width="240" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="fa" value="&lt;b&gt;First approval&lt;/b&gt;&lt;br&gt;WireOverLimit warning shown" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#534AB7;fontColor=#3C3489;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="220" y="488" width="240" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="pend" value="&lt;b&gt;Status: Pending Approval&lt;/b&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#5F5E5A;fontColor=#444441;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="220" y="580" width="240" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="sa" value="&lt;b&gt;Second approval&lt;/b&gt;&lt;br&gt;Any approver, no warning" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#534AB7;fontColor=#3C3489;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="220" y="656" width="240" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel" value="&lt;b&gt;Wire released&lt;/b&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#5F5E5A;fontColor=#444441;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="220" y="748" width="240" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="rej" value="&lt;b&gt;Reject&lt;/b&gt;&lt;br&gt;Either approver&lt;br&gt;Existing reject flow" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FAECE7;strokeColor=#993C1D;fontColor=#712B13;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="500" y="488" width="160" height="224" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="up" target="dec"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="dec" target="stp"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="dec" target="err"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="err" target="fix"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e5" value="Escalate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="err" target="esc"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="esc" target="que"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="que" target="fa"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="fa" target="pend"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="pend" target="sa"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="sa" target="rel"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.125;entryDx=0;entryDy=0;" edge="1" parent="1" source="fa" target="rej"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.875;entryDx=0;entryDy=0;" edge="1" parent="1" source="sa" target="rej"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
